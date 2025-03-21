@@ -11,3 +11,4 @@ requests-cache
 skyfield
 splines
 urllib3
+apscheduler

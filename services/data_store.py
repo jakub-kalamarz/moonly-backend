@@ -10,6 +10,9 @@ from services.helpers import (
     format_epoch, GCRF_to_ITRF, earthPositions, Topos_xyz,
     download, is_in_shadow
 )
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
+
 
 # Constants
 DATA_DIR = 'data'
@@ -29,6 +32,40 @@ _sat_data_cache = None
 _shadow_intervals_cache = None
 _updated_at_cache = None
 
+# Initialize scheduler
+scheduler = BackgroundScheduler()
+
+def refresh_satellite_data():
+    """CRON-like task for refreshing satellite data"""
+    logger.info("Starting scheduled satellite data refresh")
+    get_sat_data()
+    logger.info("Completed scheduled satellite data refresh")
+
+# Add refresh function to run every 12 hours
+scheduler.add_job(refresh_satellite_data, 'interval', hours=12, id='refresh_sat_data')
+
+# Start scheduler when application starts
+def start_scheduler():
+    """Start the background scheduler if not already running"""
+    if not scheduler.running:
+        scheduler.start()
+        logger.info("Started satellite data refresh scheduler (every 12 hours)")
+        # Ensure scheduler is stopped when application exits
+        atexit.register(lambda: scheduler.shutdown())
+
+# Function to be used in the main application
+def initialize_data_store():
+    """Initialize cache and start scheduler"""
+    # Load initial data if it exists
+    load_data()
+
+    # If data doesn't exist or is empty, generate it
+    if _sat_data_cache is None or _shadow_intervals_cache is None:
+        get_sat_data()
+        load_data()
+
+    # Start scheduler
+    start_scheduler()
 
 def _json_datetime_serialize(obj):
     """Helper function to serialize datetime objects to ISO format strings"""

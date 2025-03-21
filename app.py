@@ -3,6 +3,10 @@ import os
 from datetime import datetime
 from dateutil.parser import isoparse
 import logging
+from services.data_store import initialize_data_store
+
+# At application startup
+initialize_data_store()
 
 # Import our data handler
 from services.data_store import get_sat_data
