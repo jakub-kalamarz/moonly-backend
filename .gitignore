@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.idea
+.DS_Store
+EOP-All.txt
+ISS.OEM_J2K_EPH.xml
+de421.bsp
