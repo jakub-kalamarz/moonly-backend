@@ -1,2 +1,13 @@
-Flask
 Gunicorn
+beautifulsoup4
+blinker
+datetime
+Flask
+numpy
+python-dateutil
+python-dotenv
+requests
+requests-cache
+skyfield
+splines
+urllib3
